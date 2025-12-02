@@ -1,6 +1,7 @@
 services:
 ########## NGINX ##########
   nginx:
+    container_name: dockergis_ecw-nginx
     build:
       context: ${NGINX_CONTAINER_PATH}
     volumes:
@@ -16,44 +17,22 @@ services:
 
 ########## PHP-FPM ##########
   php-fpm:
+    container_name: dockergis_ecw-php-fpm
     build:
       context: ${PHP_FPM_CONTAINER_PATH}
       args:
         - PHP_VERSION=${PHP_VERSION}
-    volumes:
-      - ${PHP_FPM_CONTAINER_PATH}/php.ini:/usr/local/etc/php/php.ini
-      - ${HOST_CODE_PATH}:${CONTAINER_CODE_PATH}
-
-  php-fpm7:
-    build:
-      context: ${PHP_FPM_CONTAINER_PATH}
-      args:
-        - PHP_VERSION=7.4
     volumes:
       - ${PHP_FPM_CONTAINER_PATH}/php.ini:/usr/local/etc/php/php.ini
       - ${HOST_CODE_PATH}:${CONTAINER_CODE_PATH}
 
 ########## WORKSPACE ##########
   workspace:
+    container_name: dockergis_ecw-workspace
     build:
       context: ${WORKSPACE_CONTAINER_PATH}
       args:
         - PHP_VERSION=${PHP_VERSION}
-        - TZ=${WORKSPACE_TIMEZONE}
-        - LOCALE=${WORKSPACE_LOCALE}
-        - PUNAME=${WORKSPACE_NONROOT_USER_NAME}
-        - PUID=${WORKSPACE_NONROOT_USER_ID}
-        - PGNAME=${WORKSPACE_NONROOT_GROUP_NAME}
-        - PGID=${WORKSPACE_NONROOT_GROUP_ID}
-    volumes:
-      - ${HOST_CODE_PATH}:${CONTAINER_CODE_PATH}
-    tty: true
-  
-  workspace7:
-    build:
-      context: ${WORKSPACE_CONTAINER_PATH}
-      args:
-        - PHP_VERSION=7.4
         - TZ=${WORKSPACE_TIMEZONE}
         - LOCALE=${WORKSPACE_LOCALE}
         - PUNAME=${WORKSPACE_NONROOT_USER_NAME}
@@ -66,6 +45,7 @@ services:
 
 ########## POSTGRES ##########
   postgres:
+    container_name: dockergis_ecw-postgres
     user: root
     image: postgis/postgis:10-2.5
     shm_size: 4g
@@ -80,6 +60,7 @@ services:
 
 ########## PGADMIN ##########
   pgadmin:
+    container_name: dockergis_ecw-pgadmin
     user: root
     image: dpage/pgadmin4:latest
     volumes:
@@ -92,6 +73,7 @@ services:
 
 ########## GEOSERVER ##########
   geoserver:
+    container_name: dockergis_ecw-geoserver
     build:
       context: ${GEOSERVER_CONTAINER_PATH}
     volumes:

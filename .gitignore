@@ -1,0 +1,35 @@
+# Dados dos volumes Docker (dados persistentes)
+volumes/postgres/
+volumes/pgadmin/
+volumes/geoserver/
+volumes/nginx/logs/
+
+# Logs
+*.log
+
+# Arquivos temporários
+*.tmp
+*~
+.DS_Store
+
+# Arquivos de ambiente local (contém credenciais sensíveis)
+.env
+.env.local
+.env.*.local
+
+# Arquivos de backup
+*.backup
+*.backup-*
+*.bak
+
+# Cache do Docker
+.dockerignore
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Sistema
+Thumbs.db

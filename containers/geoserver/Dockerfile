@@ -1,1 +1,1 @@
-FROM deniscarriere/geoserver
+FROM kartoza/geoserver:2.19.0

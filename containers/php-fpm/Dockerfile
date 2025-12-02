@@ -1,4 +1,4 @@
-ARG PHP_VERSION=8.0
+ARG PHP_VERSION=8.2
 FROM php:${PHP_VERSION}-fpm
 
 # Adiciona pacotes
@@ -19,7 +19,15 @@ RUN set -eux; \
     libwebp-dev \
     libxpm-dev \
     libmcrypt-dev \
-    libonig-dev; \
+    libonig-dev \
+    libxrender1 \
+    libxext6 \
+    libx11-6 \
+    libxrandr2 \
+    libxcb1 \
+    fontconfig \
+    xfonts-75dpi \
+    xfonts-base; \
     rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-configure zip; \
@@ -38,21 +46,24 @@ RUN docker-php-ext-configure zip; \
 ARG INSTALL_PG_CLIENT=true
 ARG INSTALL_POSTGIS=true
 RUN if [ ${INSTALL_PG_CLIENT} = true ]; then \
-    apt-get install -yqq gnupg \
+    apt-get update -yqq \
+    && apt-get install -yqq gnupg2 ca-certificates \
     && . /etc/os-release \
     && echo "deb http://apt.postgresql.org/pub/repos/apt $VERSION_CODENAME-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
-    && curl -sL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
+    && curl -sL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql-keyring.gpg \
+    && echo "deb [signed-by=/usr/share/keyrings/postgresql-keyring.gpg] http://apt.postgresql.org/pub/repos/apt $VERSION_CODENAME-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
     && apt-get update -yqq \
-    && apt-get install -yqq postgresql-client-12 postgis; \
+    && apt-get install -yqq postgresql-client-15; \
     if [ ${INSTALL_POSTGIS} = true ]; then \
       apt-get install -yqq postgis; \
     fi \
-    && apt-get purge -yqq gnupg \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
 ;fi
 
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-    rm /var/log/lastlog /var/log/faillog
+    rm -f /var/log/lastlog /var/log/faillog
 
 # Define o workdir padrão
 WORKDIR /var/www
